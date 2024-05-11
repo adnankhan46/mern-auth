@@ -36,7 +36,6 @@ export const signin = async (req, res, next) =>{
         .cookie("access_token", token, {httpOnly: true, maxAge: 2 * 60 * 60 * 1000})
         .status(200)
         .json(rest);
-        // 2:06:49
     } catch (error) {
         next(error);
     }
