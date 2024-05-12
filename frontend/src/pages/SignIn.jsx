@@ -3,6 +3,7 @@ import {Link, useNavigate} from "react-router-dom"
 // Step 4 - Using Actions
 import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
+import OAuth from "../components/OAuth";
 
 function SignIn() {
   const [formData, setFormData] = useState({});
@@ -52,6 +53,7 @@ function SignIn() {
       <button disabled={loading} className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3'>
       {loading ? "Loading...": "Sign IN"}
       </button>
+      <OAuth/>
       </form>
       <div className="flex gap-2 mt-5">
       <p>Create a New Account</p>
