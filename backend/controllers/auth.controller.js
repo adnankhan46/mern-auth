@@ -34,7 +34,7 @@ export const signin = async (req, res, next) =>{
         // Ab token ko cookie me save kr denge !
         res
         .cookie("access_token", token, {httpOnly: true, maxAge: 2 * 60 * 60 * 1000})
-        .status(200);
+        .status(200).json(rest);
     } catch (error) {
         next(error);
     }

@@ -4,12 +4,15 @@ import dotenv from "dotenv";
 // Importing Routes
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
+// middleware
+import cookieParser from "cookie-parser";
 
 
 dotenv.config();
 const app = express();
 // Middleware modules
 app.use(express.json());
+app.use(cookieParser());
 
 // User Routes
 app.use("/api/user", userRoutes);
