@@ -45,13 +45,13 @@ setFormData({...formData, profilePicture: downloadUrl})
      <h1 className='text-3xl text-center font-semibold my-7'>Profile</h1>
      <form className='flex flex-col gap-4'>
 
-     <input type="file" 
+     <input type="file"
      ref={fileRef} hidden 
      accept='image/*' 
      onChange={(e)=> setImage(e.target.files[0])}/>
 
      <img className='h-24 w-24 self-center mt-4 cursor-pointer rounded-full object-cover' 
-     src={currentUser.profilePicture}
+     src={formData.profilePicture || currentUser.profilePicture}
      onClick={() => fileRef.current.click()} />
     
       <p className='text-sm self-center'>
