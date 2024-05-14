@@ -3,10 +3,12 @@ import {GoogleAuthProvider, signInWithPopup, getAuth} from "firebase/auth"
 import { app } from '../firebase';
 import { signInSuccess } from "../redux/user/userSlice";
 import {useDispatch} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 function OAuth() {
     {/** Kyunki ye button form ke andar h, toh submission prevent krne ke liye type button krenge */}
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleGoogleClick = async () =>{
 
@@ -29,6 +31,7 @@ function OAuth() {
             console.log(data)
             // Sending to Redux
             dispatch(signInSuccess(data));
+            navigate("/");
 
         } catch (error) {
             console.log("Failed to login with google", error);
