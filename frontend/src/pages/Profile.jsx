@@ -4,7 +4,7 @@ import {getDownloadURL, getStorage, ref, uploadBytesResumable}  from "firebase/s
 import { app } from '../firebase';
 // for uodate state
 import { useDispatch } from 'react-redux';
-import { updateUserStart, updateUserFailure, updateUserSuccess } from '../redux/user/userSlice';
+import { updateUserStart, updateUserFailure, updateUserSuccess, deleteUserFailure, deleteUserStart, deleteUserSuccess } from '../redux/user/userSlice';
 
 
 function Profile() {
@@ -65,7 +65,7 @@ setFormData({...formData, profilePicture: downloadUrl})
             body: JSON.stringify(formData),
           });
           const data = await res.json();
-          console.log(data);
+         // console.log(data);
           if(data.success === false){
             dispatch(updateUserFailure(data));
             return;
@@ -74,7 +74,23 @@ setFormData({...formData, profilePicture: downloadUrl})
           setUpdateSuccess(true);
         } catch (error) {
          dispatch(updateUserFailure(error));
-          
+        }
+      }
+
+      const handleDelete = async ()=>{
+        try {
+          dispatch(deleteUserStart());
+          const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+            method: "DELETE",
+          });
+          const data = await res.json();
+           if(data.success === false){
+             dispatch(deleteUserFailure(data));
+             return;
+           }
+           dispatch(deleteUserSuccess(data));
+        } catch (error) {
+          dispatch(deleteUserFailure(error));
         }
       }
 
@@ -131,7 +147,7 @@ setFormData({...formData, profilePicture: downloadUrl})
      <p className='text-green-700'>{updateSuccess && "Profile Updated Successfull"}</p>
 
      <div className="flex justify-between mt-2">
-     <span className='text-red-700 cursor-pointer'>Delete Account</span>
+     <span onClick={handleDelete} className='text-red-700 cursor-pointer'>Delete Account</span>
      <span className='text-red-700 cursor-pointer'>Sign OUT</span>
      </div>
     </div>
