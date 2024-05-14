@@ -2,13 +2,22 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {getDownloadURL, getStorage, ref, uploadBytesResumable}  from "firebase/storage"
 import { app } from '../firebase';
+// for uodate state
+import { useDispatch } from 'react-redux';
+import { updateUserStart, updateUserFailure, updateUserSuccess } from '../redux/user/userSlice';
+
 
 function Profile() {
   const fileRef = useRef(null);
   const [image, setImage] = useState(undefined);
-  const {currentUser} = useSelector((state)=> state.user);
+  const {currentUser, loading, error} = useSelector((state)=> state.user);
   const [imgProg, setImgProg] = useState(0);
   const [imgErr, setImgErr] = useState(false);
+
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+
+  // for update State
+ const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({});
 
@@ -39,11 +48,40 @@ setFormData({...formData, profilePicture: downloadUrl})
      });
      }
     );
-  }
+  };
+      const handleChange = (e) => {
+        setFormData({...formData, [e.target.id] : e.target.value})
+      };
+      //*************************** * Handle Submit
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+          dispatch(updateUserStart());
+          const res = await fetch(`/api/user/update/${currentUser._id}`, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          });
+          const data = await res.json();
+          console.log(data);
+          if(data.success === false){
+            dispatch(updateUserFailure(data));
+            return;
+          }
+          dispatch(updateUserSuccess(data));
+          setUpdateSuccess(true);
+        } catch (error) {
+         dispatch(updateUserFailure(error));
+          
+        }
+      }
+
   return (
     <div className='mx-auto max-w-lg'>
      <h1 className='text-3xl text-center font-semibold my-7'>Profile</h1>
-     <form className='flex flex-col gap-4'>
+     <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
 
      <input type="file"
      ref={fileRef} hidden 
@@ -67,27 +105,34 @@ setFormData({...formData, profilePicture: downloadUrl})
     type="text" 
     id='username' 
     placeholder='Username' 
-    className='bg-slate-100 rounded-lg p-3 ' />
+    className='bg-slate-100 rounded-lg p-3 '
+    onChange={handleChange} />
 
     <input
     defaultValue={currentUser.email}
     type="email" 
     id='email' 
     placeholder='Email' 
-    className='bg-slate-100 rounded-lg p-3 ' />
+    className='bg-slate-100 rounded-lg p-3 '
+    onChange={handleChange} />
 
     <input
     type="password" 
     id='password' 
     placeholder='Password' 
-    className='bg-slate-100 rounded-lg p-3 ' />
+    className='bg-slate-100 rounded-lg p-3'
+    onChange={handleChange} />
 
-    <button className='bg-slate-700 text-white p-3 rounded-lg mt-2 hover:opacity-95 disabled:opacity-80'>UPDATE</button>
+    <button className='bg-slate-700 text-white p-3 rounded-lg mt-2 hover:opacity-95 disabled:opacity-80'>
+    {loading ? "Loading..." : "UPDATE"}
+    </button>
      </form>
+     <p className='text-red-700 mt-1'>{error && "Something went wrong"}</p>
+     <p className='text-green-700'>{updateSuccess && "Profile Updated Successfull"}</p>
 
-     <div className="flex justify-between">
-     <span className='text-red-700 cursor-pointer mt-4'>Delete Account</span>
-     <span className='text-red-700 cursor-pointer mt-4'>Sign OUT</span>
+     <div className="flex justify-between mt-2">
+     <span className='text-red-700 cursor-pointer'>Delete Account</span>
+     <span className='text-red-700 cursor-pointer'>Sign OUT</span>
      </div>
     </div>
   )
