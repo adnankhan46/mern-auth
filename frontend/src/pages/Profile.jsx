@@ -104,7 +104,7 @@ setFormData({...formData, profilePicture: downloadUrl})
           console.log(data);
          dispatch(SignOut());
         } catch (error) {
-          console.log(error)
+          console.log(error);
         }
       }
   
