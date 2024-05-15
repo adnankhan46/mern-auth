@@ -1,5 +1,5 @@
 import User from "../models/user.modal.js";
-import bcryptjs from "bcrypt";
+import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
