@@ -4,8 +4,10 @@ import {getDownloadURL, getStorage, ref, uploadBytesResumable}  from "firebase/s
 import { app } from '../firebase';
 // for uodate state
 import { useDispatch } from 'react-redux';
-import { updateUserStart, updateUserFailure, updateUserSuccess, deleteUserFailure, deleteUserStart, deleteUserSuccess } from '../redux/user/userSlice';
+import { updateUserStart, updateUserFailure, updateUserSuccess, deleteUserFailure, deleteUserStart, deleteUserSuccess, SignOut } from '../redux/user/userSlice';
 
+// Toastify
+import toast, { Toaster } from 'react-hot-toast';
 
 function Profile() {
   const fileRef = useRef(null);
@@ -72,6 +74,7 @@ setFormData({...formData, profilePicture: downloadUrl})
           }
           dispatch(updateUserSuccess(data));
           setUpdateSuccess(true);
+          toast.success('Profile Updated Successfull!')
         } catch (error) {
          dispatch(updateUserFailure(error));
         }
@@ -92,10 +95,23 @@ setFormData({...formData, profilePicture: downloadUrl})
         } catch (error) {
           dispatch(deleteUserFailure(error));
         }
-      }
+      };
 
+      const handleSignOut = async () => { 
+        try {
+          const res = await fetch('/api/auth/signout');
+          const data = await res.json();
+          console.log(data);
+         dispatch(SignOut());
+        } catch (error) {
+          console.log(error)
+        }
+      }
+  
+      
   return (
     <div className='mx-auto max-w-lg'>
+    <Toaster />
      <h1 className='text-3xl text-center font-semibold my-7'>Profile</h1>
      <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
 
@@ -148,7 +164,7 @@ setFormData({...formData, profilePicture: downloadUrl})
 
      <div className="flex justify-between mt-2">
      <span onClick={handleDelete} className='text-red-700 cursor-pointer'>Delete Account</span>
-     <span className='text-red-700 cursor-pointer'>Sign OUT</span>
+     <span onClick={handleSignOut} className='text-red-700 cursor-pointer'>Sign OUT</span>
      </div>
     </div>
   )
