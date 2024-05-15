@@ -99,9 +99,7 @@ setFormData({...formData, profilePicture: downloadUrl})
 
       const handleSignOut = async () => { 
         try {
-          const res = await fetch('/api/auth/signout');
-          const data = await res.json();
-          console.log(data);
+        await fetch('/api/auth/signout');
          dispatch(SignOut());
         } catch (error) {
           console.log(error);
